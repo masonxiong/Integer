@@ -6,7 +6,7 @@
 - [![Compiler](https://img.shields.io/badge/Compiler-GCC-green.svg)](https://gcc.gnu.org/), [![Compiler](https://img.shields.io/badge/Compiler-Clang-green.svg)](https://clang.llvm.org/)
 - [![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
 
-> **目前最高效的十进制高精度整数库** - 在 Library Checker 上打破多项性能记录的 Header-Only C++ 库
+> **极高效的十进制高精度整数库** - 在 Library Checker 上打破多项性能记录的 Header-Only C++ 库
 
 一个现代化、高性能的 C++ 任意精度整数算术库，专为追求极致性能而设计。支持无符号和有符号大整数的完整运算，并在权威测试平台上刷新性能记录。
 
@@ -31,6 +31,7 @@
     - [提交代码](#提交代码)
     - [代码规范](#代码规范)
   - [版本历史](#版本历史)
+    - [V2 (2025-9-4)](#v2-2025-9-4)
     - [V1 (2025-8-24)](#v1-2025-8-24)
   - [问题反馈](#问题反馈)
     - [报告 Bug](#报告-bug)
@@ -160,7 +161,7 @@ cd build && ctest --output-on-failure
 - 乘法：对两个长度为 $2\cdot10^6$ 的高精度整数进行输入、乘法、输出用时仅 $37\text{ ms}$，是 [Library Checker 最优解](https://judge.yosupo.jp/submission/309889)。
 - 除法：对两个长度为 $2\cdot10^6$ 的高精度整数进行输入、除法、取模、输出用时仅 $143\text{ ms}$，是 [Library Checker 最优解](https://judge.yosupo.jp/submission/309781)。
 
-由此看来本模板的效率相当优秀，确实配得上“目前最高效”的称号。尤其是除法取模的效率非常惊人，比第二名快了大约 $34\%$！
+由此看来本模板的效率相当优秀，确实配得上“极高效”的称号。尤其是除法取模的效率非常惊人，比第二名快了大约 $34\%$！
 
 # 完整功能
 
@@ -334,6 +335,19 @@ copies or substantial portions of the Software.
 - 确保代码通过所有现有测试
 
 ## 版本历史
+
+### V2 (2025-9-4)
+
+- 增加 AArch64 NEON 支持与纯标量后备实现，运行时自动选择 AVX2 → NEON → Scalar。
+- FFT 工作区与输出缓冲改为 thread_local，保证线程安全，移除跨线程共享。
+- 修复 `UnsignedInteger::operator=(UnsignedInteger&&)` 中的内存泄漏，以及乘除模和 FFT 中的 realloc/delete[] 泄漏与竞争条件。
+- 字符串转换改为线程局部缓存，更安全。
+- 修复若干未定义行为。
+- 构建系统：提供 Header-Only `Integer::Integer` 目标，完善安装与导出；新增 `BUILD_EXAMPLES`、`BUILD_TESTS`, `ENABLE_HOST_OPT`, `ENABLE_EXAMPLE_SIMD` 选项。
+- 新增 Python 驱动的 CLI 测试（含 SIMD/Scalar 强制）并集成 ASan/UBSan；通过 CTest 进行确定性与随机化覆盖。
+- 引入 GitHub Actions CI，支持 Ubuntu/macOS、x86_64/arm64 Release 构建并运行测试。
+- 刷新文档与示例，新增线程安全示例段落。
+- 添加 `.clang-format`、`.clangd` 等开发工具配置。
 
 ### V1 (2025-8-24)
 
