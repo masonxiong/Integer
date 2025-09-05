@@ -42,10 +42,10 @@ A modern, high-performance C++ arbitrary-precision arithmetic library built for 
 
 # Features
 
-- **使用方法简单**：这是一个 Header-Only 的库，你只需要包含头文件即可使用。
-- **效率极其优秀**：在发布时（2025-9-2），本模板是 [Library Checker](https://judge.yosupo.jp/) 中所有十进制高精度整数模板的最优解。
-- **覆盖功能多样**：本模板实现了几乎所有会用到的类型转换和输入输出（兼容 `iostream`）以及全体基础运算（加减乘除模以及比较）。
-- **支持动态长度**：和部分高效率高精度模板不同，本模板的效率并不依赖静态内存。
+- **Easy to Use**: Being header-only, you can start by simply including the header file.
+- **Excellent Performance**: As of 2025-09-02, this template ranks first among all decimal big-integer libraries on [Library Checker](https://judge.yosupo.jp/).
+- **Versatile Features**: Provides nearly all commonly needed type conversions and I/O (stream-compatible) plus the full set of basic arithmetic operations (add, subtract, multiply, divide, modulo, compare).
+- **Dynamic Length Support**: Unlike some high-performance libraries, efficiency here does not rely on static buffer sizes.
 
 # Quick Start
 
@@ -55,15 +55,15 @@ Detailed examples can be found in [basic usage examples](./examples/basic_usage.
 #include "Integer.h"
 
 int main() {
-    // 创建大整数
+    // Create big integers
     UnsignedInteger a = "123456789012345678901234567890"_UI;
     UnsignedInteger b = "987654321098765432109876543210"_UI;
     
-    // 基本运算
+    // Basic operations
     std::cout << "a + b = " << a + b << std::endl;
     std::cout << "a * b = " << a * b << std::endl;
     
-    // 有符号运算
+    // Signed operations
     SignedInteger x = -"123456789"_SI;
     SignedInteger y = "987654321"_SI;
     std::cout << "x + y = " << x + y << std::endl;
