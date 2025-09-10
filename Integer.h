@@ -7,11 +7,11 @@
  * It is suitable for scenarios requiring large number computations.
  *
  * @author [masonxiong](https://www.luogu.com.cn/user/446979), [yuygfgg](https://www.luogu.com.cn/user/251551)
- * @date 2025-9-04
+ * @date 2025-9-10
  */
 
 #ifndef INTEGER_H
-#define INTEGER_H 20250904L
+#define INTEGER_H 20250910L
 
 #include <algorithm>
 #include <cmath>
@@ -39,12 +39,11 @@
 #endif
 
 #ifndef __CONSTEXPR
-#ifdef _GLIBCXX14_CONSTEXPR
-#define __CONSTEXPR _GLIBCXX14_CONSTEXPR
-#else
+#if __cplusplus >= 201402L
 #define __CONSTEXPR constexpr
+#else
+#define __CONSTEXPR
 #endif
-
 #endif
 
 namespace detail {
@@ -599,7 +598,7 @@ class UnsignedInteger {
         digits = new std::uint32_t[length = capacity = (stringLength + 7) >> 3];
         VALIDITY_CHECK(stringLength, std::invalid_argument, "UnsignedInteger constructor error: the provided C-style string is empty. UnsignedInteger can only be constructed from non-empty strings containing only digits.")
         VALIDITY_CHECK(std::all_of(value, value + stringLength, [](char digit) -> bool { return std::isdigit(digit); }), std::invalid_argument, "UnsignedInteger constructor error: the provided C-style string value = "
-                                                                                                                                                " + std::string(value) + "
+                                                                                                                                                + std::string(value) +
                                                                                                                                                 " contains non-digit characters. UnsignedInteger can only be constructed from non-empty strings containing only digits.")
         construct(value, stringLength);
     }
@@ -607,7 +606,7 @@ class UnsignedInteger {
     UnsignedInteger(const std::string& value) : UnsignedInteger(std::uint32_t(value.size() + 7) >> 3, std::uint32_t(value.size() + 7) >> 3) {
         VALIDITY_CHECK(value.size(), std::invalid_argument, "UnsignedInteger constructor error: the provided string is empty. UnsignedInteger can only be constructed from non-empty strings containing only digits.")
         VALIDITY_CHECK(std::all_of(value.begin(), value.end(), [](char digit) -> bool { return std::isdigit(digit); }), std::invalid_argument, "UnsignedInteger constructor error: the provided string value = "
-                                                                                                                                               " + value + "
+                                                                                                                                               + value +
                                                                                                                                                " contains non-digit characters. UnsignedInteger can only be constructed from non-empty strings containing only digits.")
         construct(value.data(), std::uint32_t(value.size()));
     }
@@ -672,7 +671,7 @@ class UnsignedInteger {
         const std::uint32_t stringLength = std::uint32_t(std::strlen(value));
         VALIDITY_CHECK(stringLength, std::invalid_argument, "UnsignedInteger operator= error: the provided C-style string is empty. UnsignedInteger can only be constructed from non-empty strings containing only digits.")
         VALIDITY_CHECK(std::all_of(value, value + stringLength, [](char digit) -> bool { return std::isdigit(digit); }), std::invalid_argument, "UnsignedInteger operator= error: the provided C-style string value = "
-                                                                                                                                                " + std::string(value) + "
+                                                                                                                                                + std::string(value) +
                                                                                                                                                 " contains non-digit characters. UnsignedInteger can only be constructed from non-empty strings containing only digits.")
         if (capacity < (length = (stringLength + 7) >> 3))
             delete[] digits, digits = new std::uint32_t[capacity = length];
@@ -682,7 +681,7 @@ class UnsignedInteger {
     UnsignedInteger& operator=(const std::string& value) {
         VALIDITY_CHECK(value.size(), std::invalid_argument, "UnsignedInteger operator= error: the provided string is empty. UnsignedInteger can only be constructed from non-empty strings containing only digits.")
         VALIDITY_CHECK(std::all_of(value.begin(), value.end(), [](char digit) -> bool { return std::isdigit(digit); }), std::invalid_argument, "UnsignedInteger operator= error: the provided string value = "
-                                                                                                                                               " + value + "
+                                                                                                                                               + value +
                                                                                                                                                " contains non-digit characters. UnsignedInteger can only be constructed from non-empty strings containing only digits.")
         if (capacity < (length = std::uint32_t(value.size() + 7) >> 3))
             delete[] digits, digits = new std::uint32_t[capacity = length];
@@ -999,7 +998,7 @@ class SignedInteger {
         VALIDITY_CHECK(value, std::invalid_argument, "SignedInteger constructor error: the provided C-style string is a null pointer.")
         VALIDITY_CHECK(*value, std::invalid_argument, "SignedInteger constructor error: the provided C-style string is empty. SignedInteger can only be constructed from non-empty strings containing only digits (optionally prefixed with '-').")
         VALIDITY_CHECK(std::all_of(value + (*value == '-'), value + std::strlen(value), [](char digit) -> bool { return std::isdigit(digit); }), std::invalid_argument, "SignedInteger constructor error: the provided C-style string value = "
-                                                                                                                                                                        " + std::string(value) + "
+                                                                                                                                                                        + std::string(value) +
                                                                                                                                                                         " contains non-digit characters. SignedInteger can only be constructed from non-empty strings containing only digits (optionally prefixed with '-').")
         absolute = value + (sign = *value == '-'), sign = sign && bool(absolute);
     }
@@ -1007,7 +1006,7 @@ class SignedInteger {
     SignedInteger(const std::string& value) {
         VALIDITY_CHECK(value.size(), std::invalid_argument, "SignedInteger constructor error: the provided string is empty. SignedInteger can only be constructed from non-empty strings containing only digits (optionally prefixed with '-').")
         VALIDITY_CHECK(std::all_of(value.begin() + (value.front() == '-'), value.end(), [](char digit) -> bool { return std::isdigit(digit); }), std::invalid_argument, "SignedInteger constructor error: the provided string value = "
-                                                                                                                                                                        " + value + "
+                                                                                                                                                                        + value +
                                                                                                                                                                         " contains non-digit characters. SignedInteger can only be constructed from non-empty strings containing only digits (optionally prefixed with '-').")
         absolute = value.data() + (sign = value.front() == '-'), sign = sign && bool(absolute);
     }
@@ -1045,7 +1044,7 @@ class SignedInteger {
         VALIDITY_CHECK(value, std::invalid_argument, "SignedInteger operator= error: the provided C-style string is a null pointer.")
         VALIDITY_CHECK(*value, std::invalid_argument, "SignedInteger operator= error: the provided C-style string is empty. SignedInteger can only be assigned from non-empty strings containing only digits (optionally prefixed with '-').")
         VALIDITY_CHECK(std::all_of(value + (*value == '-'), value + std::strlen(value), [](char digit) -> bool { return std::isdigit(digit); }), std::invalid_argument, "SignedInteger operator= error: the provided C-style string value = "
-                                                                                                                                                                        " + std::string(value) + "
+                                                                                                                                                                        + std::string(value) +
                                                                                                                                                                         " contains non-digit characters. SignedInteger can only be assigned from non-empty strings containing only digits (optionally prefixed with '-').")
         return absolute = value + (sign = *value == '-'), sign = sign && bool(absolute), *this;
     }
@@ -1053,7 +1052,7 @@ class SignedInteger {
     SignedInteger& operator=(const std::string& value) {
         VALIDITY_CHECK(value.size(), std::invalid_argument, "SignedInteger operator= error: the provided string is empty. SignedInteger can only be assigned from non-empty strings containing only digits (optionally prefixed with '-').")
         VALIDITY_CHECK(std::all_of(value.begin() + (value.front() == '-'), value.end(), [](char digit) -> bool { return std::isdigit(digit); }), std::invalid_argument, "SignedInteger operator= error: the provided string value = "
-                                                                                                                                                                        " + value + "
+                                                                                                                                                                        + value +
                                                                                                                                                                         " contains non-digit characters. SignedInteger can only be assigned from non-empty strings containing only digits (optionally prefixed with '-').")
         return absolute = value.data() + (sign = value.front() == '-'), sign = sign && bool(absolute), *this;
     }
